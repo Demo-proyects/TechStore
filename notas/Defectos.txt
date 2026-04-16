@@ -1,0 +1,165 @@
+OBJETIVO:
+Corregir errores de UX, navegación, animaciones y consistencia visual en mi sitio (index.html + tienda.html), manteniendo el diseño actual pero mejorando comportamiento y coherencia.
+
+---
+
+## 1. SISTEMA GLOBAL DE NAVEGACIÓN (REGLA PRINCIPAL)
+
+TODOS los enlaces del sitio deben seguir esta lógica unificada:
+
+### Caso A: navegación dentro de la misma página
+
+* Scroll suave hacia la sección correspondiente
+* Sin saltos bruscos
+
+### Caso B: navegación hacia otra página + sección o filtro
+
+1. Navegar a la página destino
+2. Activar automáticamente el filtro correspondiente
+3. Hacer scroll automático a la sección de productos filtrados
+
+⚠️ Este comportamiento YA existe correctamente en algunos elementos (ej: bloque “Asistentes Voz → Ver más”).
+👉 TODOS los demás enlaces deben replicar EXACTAMENTE este comportamiento.
+
+---
+
+## 2. ERRORES DE ANIMACIÓN (INDEX)
+
+Problema:
+Algunos bloques no tienen animación de entrada mientras otros sí.
+
+Objetivo:
+
+* Unificar TODAS las animaciones de entrada
+* Mantener coherencia visual
+
+Bloques afectados:
+
+* “Colección 2024 / AUDIO & SOUND”
+* “Nueva colección / ESTILO & RENDIMIENTO”
+* “SHOWROOM / Experiencia Premium”
+* Sección de ubicación (hay mezcla inconsistente de animaciones)
+
+---
+
+## 3. ERRORES DE ENLACES
+
+### Header:
+
+* INICIO → debe hacer scroll al hero + reiniciar animación
+* Logo “TECH STORE” → mismo comportamiento que INICIO
+* COLECCIONES → scroll funcional
+* PRODUCTOS → scroll funcional
+* OFERTAS → scroll funcional
+* CONTACTO → abrir WhatsApp
+
+### Mobile:
+
+* Eliminar enlace CONTACTO (ya existe botón WhatsApp)
+* Mantener coherencia con desktop
+
+---
+
+### Enlaces rotos o incompletos:
+
+* “EXPLORAR AHORA” (hero) → scroll a sección de productos
+* “Ver todo” (smartphones, smartwatch, etc.) → debe aplicar filtro correcto + scroll
+* Categorías → deben activar filtro (no solo redirigir)
+
+---
+
+## 4. RESPONSIVE (TABLET)
+
+Problema:
+
+* Logo demasiado cerca de los enlaces
+
+Solución:
+
+* Ajustar spacing hacia la izquierda
+* Mejorar jerarquía visual
+
+---
+
+## 5. LEGIBILIDAD (MODO CLARO)
+
+Problema:
+Textos secundarios son ilegibles (demasiado bajo contraste)
+
+Ejemplo:
+
+* “Samsung”
+* “1 review”
+* reseñas en general
+
+Solución:
+
+* Aumentar contraste ligeramente
+* Mantener jerarquía (no llamar más la atención que el título)
+* Aplicar a TODO el sitio
+
+---
+
+## 6. FOOTER INCONSISTENTE
+
+Problema:
+
+* Footer diferente entre index.html y tienda.html (modo claro)
+
+Solución:
+
+* Unificar diseño y estilos
+
+---
+
+## 7. TIENDA.HTML (UX + FUNCIONALIDAD)
+
+### Filtro de precio:
+
+* El máximo debe basarse en el producto más caro
+* No exceder ese valor
+
+---
+
+### Modal de producto (MOBILE):
+
+* Debe ocupar 100% del alto
+* Debe abrirse automáticamente la PRIMERA VEZ que el usuario hace clic en “Añadir”
+
+Mensaje inicial:
+“Para ver más detalles, haz clic en el producto la próxima vez”
+
+Luego:
+
+* Comportamiento vuelve a la normalidad
+
+---
+
+## 8. CARRITO
+
+Problemas:
+
+* No funciona en index
+* Precio no refleja cantidad correctamente
+
+Solución:
+
+* Unificar carrito entre index y tienda
+* El precio debe multiplicar por cantidad
+* Mantener diseño de tienda
+* NO añadir carrito flotante en index
+
+---
+
+## 9. OBJETIVO FINAL
+
+* UX coherente en TODO el sitio
+* Sistema de navegación uniforme
+* Animaciones consistentes
+* Legibilidad correcta
+* Funcionalidad completa en TODOS los enlaces
+
+---
+
+IMPORTANTE:
+No cambiar el diseño visual general, solo mejorar comportamiento, coherencia y experiencia.

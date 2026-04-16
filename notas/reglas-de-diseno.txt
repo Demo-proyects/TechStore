@@ -1,0 +1,412 @@
+# SISTEMA DE COLORES Y MODO CLARO/OSCURO - TECHSTORE
+
+## 📋 DESCRIPCIÓN GENERAL
+
+Este documento explica el sistema de colores implementado en TechStore y cómo mantener la coherencia visual entre el modo oscuro y modo claro en todas las secciones de la página.
+
+---
+
+## 🎨 PALETA DE COLORES
+
+### MODO OSCURO (Dark Mode) - Por Defecto
+
+```css
+:root {
+    /* Fondos */
+    --bg-primary: #0a0e27;        /* Fondo principal de la página */
+    --bg-secondary: #131729;       /* Fondo de secciones alternas */
+    --bg-card: #1a1f3a;           /* Fondo de tarjetas y elementos */
+    
+    /* Textos */
+    --text-primary: #ffffff;       /* Texto principal (títulos, contenido importante) */
+    --text-secondary: rgba(255, 255, 255, 0.7);  /* Texto secundario (descripciones, subtítulos) */
+    
+    /* Acentos */
+    --accent-primary: #00d4ff;     /* Color primario de acción (cyan brillante) */
+    --accent-secondary: #0066ff;   /* Color secundario de acción (azul) */
+    
+    /* Bordes y divisores */
+    --border-color: rgba(255, 255, 255, 0.1);  /* Bordes sutiles */
+    
+    /* Gradientes */
+    --gradient-1: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(217, 70, 239, 0.15) 100%);
+    --gradient-2: linear-gradient(135deg, rgba(30, 27, 75, 0.15) 0%, rgba(49, 46, 129, 0.15) 100%);
+}
+```
+
+**Características del modo oscuro:**
+- Fondos muy oscuros (casi negros) para reducir fatiga visual
+- Contraste alto entre texto y fondo para legibilidad
+- Acentos en cyan y azul para destacar elementos interactivos
+- Gradientes sutiles (15% de opacidad) para no abrumar
+- Bordes con 10% de opacidad para separación delicada
+
+---
+
+### MODO CLARO (Light Mode)
+
+```css
+[data-theme="light"] {
+    /* Fondos */
+    --bg-primary: #f8f9fa;         /* Fondo principal claro (gris muy claro) */
+    --bg-secondary: #ffffff;       /* Fondo de secciones (blanco puro) */
+    --bg-card: #ffffff;            /* Fondo de tarjetas (blanco puro) */
+    
+    /* Textos */
+    --text-primary: #1a1f3a;       /* Texto principal (azul oscuro) */
+    --text-secondary: rgba(26, 31, 58, 0.7);  /* Texto secundario con opacidad */
+    
+    /* Acentos */
+    --accent-primary: #0066ff;     /* Color primario (azul más oscuro que en dark mode) */
+    --accent-secondary: #00d4ff;   /* Color secundario (cyan) */
+    
+    /* Bordes */
+    --border-color: rgba(26, 31, 58, 0.1);  /* Bordes oscuros con opacidad */
+    
+    /* Gradientes */
+    --gradient-1: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(217, 70, 239, 0.05) 100%);
+    --gradient-2: linear-gradient(135deg, rgba(30, 27, 75, 0.05) 0%, rgba(49, 46, 129, 0.05) 100%);
+}
+```
+
+**Características del modo claro:**
+- Fondos claros (blanco y gris muy claro) para ambientes bien iluminados
+- Textos oscuros para máximo contraste
+- Los colores de acento se invierten (azul más oscuro es primario)
+- Gradientes más sutiles (5% de opacidad) para mantener limpieza
+- Bordes más definidos pero sutiles
+
+---
+
+## 🔧 CÓMO USAR LAS VARIABLES CSS
+
+### Regla de Oro: SIEMPRE usar variables CSS en vez de colores directos
+
+❌ **INCORRECTO:**
+```css
+.mi-tarjeta {
+    background: #1a1f3a;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+```
+
+✅ **CORRECTO:**
+```css
+.mi-tarjeta {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+```
+
+### Usando variables en estilos inline (HTML)
+
+```html
+<!-- Para fondos -->
+<div style="background: var(--bg-card);">
+
+<!-- Para textos -->
+<p style="color: var(--text-primary);">
+
+<!-- Para bordes -->
+<div style="border: 1px solid var(--border-color);">
+
+<!-- Para gradientes -->
+<div style="background: var(--gradient-1);">
+```
+
+---
+
+## 📝 GUÍA PARA CREAR NUEVAS SECCIONES
+
+### Paso 1: Estructura HTML
+
+Cuando crees una nueva sección, usa las clases y estilos inline adecuados:
+
+```html
+<section class="py-16 px-6" style="background: var(--bg-secondary);">
+    <div class="container mx-auto">
+        
+        <!-- Título de sección -->
+        <h2 class="orbitron text-3xl font-bold mb-8" style="color: var(--text-primary);">
+            MI NUEVA SECCIÓN
+        </h2>
+        
+        <!-- Descripción -->
+        <p class="text-base mb-12" style="color: var(--text-secondary);">
+            Esta es una descripción de ejemplo
+        </p>
+        
+        <!-- Tarjeta de contenido -->
+        <div class="bg-card rounded-xl p-6" style="background: var(--bg-card); border: 1px solid var(--border-color);">
+            <h3 style="color: var(--text-primary);">Título de tarjeta</h3>
+            <p style="color: var(--text-secondary);">Descripción de tarjeta</p>
+        </div>
+        
+    </div>
+</section>
+```
+
+### Paso 2: Añadir estilos CSS personalizados
+
+Si necesitas CSS personalizado, crea clases que usen variables:
+
+```css
+.mi-elemento-especial {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.mi-elemento-especial:hover {
+    border-color: var(--accent-primary);
+    box-shadow: 0 5px 20px rgba(0, 212, 255, 0.2);
+}
+```
+
+### Paso 3: Botones y elementos interactivos
+
+```html
+<!-- Botón primario -->
+<button class="px-6 py-3 rounded-lg font-semibold"
+        style="background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary)); color: white;">
+    Botón de acción
+</button>
+
+<!-- Botón secundario -->
+<button class="px-6 py-3 rounded-lg font-semibold"
+        style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color);">
+    Botón secundario
+</button>
+```
+
+---
+
+## 🎯 TABLA DE REFERENCIA RÁPIDA
+
+| Elemento | Variable a usar | Ejemplo |
+|----------|----------------|---------|
+| Fondo principal de página | `var(--bg-primary)` | Body, sections principales |
+| Fondo de secciones alternas | `var(--bg-secondary)` | Secciones de categorías, servicios |
+| Fondo de tarjetas | `var(--bg-card)` | Product cards, service cards |
+| Títulos importantes | `var(--text-primary)` | H1, H2, nombres de productos |
+| Descripciones/subtítulos | `var(--text-secondary)` | Párrafos, descripciones |
+| Elementos interactivos | `var(--accent-primary)` | Botones, links, iconos |
+| Bordes | `var(--border-color)` | Borders de cards, divisores |
+| Overlays sutiles | `var(--gradient-1)` o `var(--gradient-2)` | Fondos de cards especiales |
+
+---
+
+## 🚀 EJEMPLOS DE COMPONENTES COMUNES
+
+### Tarjeta de Producto
+
+```html
+<div class="product-card" style="background: var(--bg-card); border: 1px solid var(--border-color);">
+    <div class="product-image">
+        <img src="producto.jpg" alt="Producto">
+    </div>
+    <div class="p-6">
+        <h3 class="font-bold text-lg mb-2" style="color: var(--text-primary);">
+            NOMBRE PRODUCTO
+        </h3>
+        <p class="text-sm mb-4" style="color: var(--text-secondary);">
+            Descripción del producto
+        </p>
+        <div class="flex justify-between items-center">
+            <span class="font-bold text-xl" style="color: var(--accent-primary);">
+                $999
+            </span>
+            <button style="background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary)); color: white;">
+                Comprar
+            </button>
+        </div>
+    </div>
+</div>
+```
+
+### Sección con Gradiente de Fondo
+
+```html
+<section class="py-16" style="background: var(--gradient-1);">
+    <!-- Contenido -->
+</section>
+```
+
+### Input/Formulario
+
+```html
+<input type="text" 
+       style="background: var(--bg-card); 
+              color: var(--text-primary); 
+              border: 1px solid var(--border-color);"
+       placeholder="Buscar productos...">
+```
+
+---
+
+## ⚠️ ERRORES COMUNES A EVITAR
+
+### ❌ Error 1: Usar colores directos
+```css
+background: #ffffff;  /* MAL */
+```
+```css
+background: var(--bg-card);  /* BIEN */
+```
+
+### ❌ Error 2: No considerar ambos modos
+```css
+.elemento {
+    color: white;  /* Solo funciona en dark mode */
+}
+```
+```css
+.elemento {
+    color: var(--text-primary);  /* Funciona en ambos modos */
+}
+```
+
+### ❌ Error 3: Gradientes con colores fijos
+```css
+background: linear-gradient(135deg, #8b5cf6, #d946ef);  /* MAL */
+```
+```css
+background: var(--gradient-1);  /* BIEN */
+```
+
+---
+
+## 🔄 CÓMO FUNCIONA EL CAMBIO DE TEMA
+
+El sistema usa el atributo `data-theme` en el elemento `<html>`:
+
+```javascript
+// Cambiar tema
+function toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+}
+```
+
+Cuando `data-theme="light"`, se activan automáticamente las variables del modo claro.
+Cuando no hay atributo o es 'dark', se usan las variables del modo oscuro (por defecto).
+
+---
+
+## 📱 CONSIDERACIONES RESPONSIVE
+
+Las variables CSS funcionan igual en todos los tamaños de pantalla. Solo asegúrate de que:
+
+1. Los textos tengan suficiente contraste en ambos modos
+2. Los botones sean visibles en ambos modos
+3. Las sombras se adapten (usa opacidades bajas)
+
+---
+
+## ✅ CHECKLIST ANTES DE AÑADIR UNA NUEVA SECCIÓN
+
+- [ ] Usé `var(--bg-primary)`, `var(--bg-secondary)` o `var(--bg-card)` para fondos
+- [ ] Usé `var(--text-primary)` para títulos
+- [ ] Usé `var(--text-secondary)` para descripciones
+- [ ] Usé `var(--accent-primary)` para elementos interactivos
+- [ ] Usé `var(--border-color)` para todos los bordes
+- [ ] Probé la sección en AMBOS modos (claro y oscuro)
+- [ ] Los botones usan el gradiente de acentos
+- [ ] No hay colores hardcodeados en ningún lugar
+
+---
+
+## 🎓 EJEMPLO COMPLETO: NUEVA SECCIÓN DE TESTIMONIOS
+
+```html
+<section class="py-16 px-6" style="background: var(--bg-secondary);">
+    <div class="container mx-auto">
+        <!-- Título -->
+        <h2 class="orbitron text-3xl font-bold text-center mb-12" 
+            style="color: var(--text-primary);">
+            LO QUE DICEN NUESTROS CLIENTES
+        </h2>
+        
+        <!-- Grid de testimonios -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Testimonio 1 -->
+            <div class="p-6 rounded-xl" 
+                 style="background: var(--bg-card); border: 1px solid var(--border-color);">
+                <p class="text-sm mb-4" style="color: var(--text-secondary);">
+                    "Excelente servicio y productos de calidad. Lo recomiendo totalmente."
+                </p>
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full mr-3" 
+                         style="background: var(--gradient-1);"></div>
+                    <div>
+                        <p class="font-bold text-sm" style="color: var(--text-primary);">
+                            Juan Pérez
+                        </p>
+                        <p class="text-xs" style="color: var(--text-secondary);">
+                            Cliente verificado
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Más testimonios... -->
+        </div>
+    </div>
+</section>
+
+<style>
+/* Estilos adicionales si es necesario */
+.testimonio-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.testimonio-card:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-5px);
+}
+</style>
+```
+
+---
+
+## 📞 SOPORTE
+
+Si tienes dudas sobre cómo implementar el sistema de colores en una nueva sección:
+
+1. Revisa las secciones existentes en el HTML
+2. Copia la estructura que más se parezca a lo que necesitas
+3. Reemplaza el contenido manteniendo las variables CSS
+4. Prueba en ambos modos antes de considerar terminado
+
+**Recuerda:** La coherencia visual entre modos claro y oscuro es fundamental para la experiencia del usuario.
+
+---
+
+## 🎨 PALETA DE COLORES VISUAL
+
+### Dark Mode
+- 🟦 Primario: #0a0e27
+- 🟦 Secundario: #131729
+- 🟦 Card: #1a1f3a
+- ⚪ Texto: #ffffff
+- 🔵 Acento: #00d4ff / #0066ff
+
+### Light Mode
+- ⚪ Primario: #f8f9fa
+- ⚪ Secundario: #ffffff
+- ⚪ Card: #ffffff
+- 🟦 Texto: #1a1f3a
+- 🔵 Acento: #0066ff / #00d4ff
+
+---
+
+**Última actualización:** Febrero 2026
+**Versión:** 1.0

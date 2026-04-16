@@ -1,0 +1,366 @@
+/* ========== VARIABLES CSS (TEMA OSCURO POR DEFECTO) ========== */
+:root {
+    --bg-primary: #0a0e27;
+    --bg-secondary: #131729;
+    --bg-card: #1a1f3a;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --accent-primary: #00d4ff;
+    --accent-secondary: #0066ff;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --gradient-1: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(217,70,239,0.15) 100%);
+    --gradient-2: linear-gradient(135deg, rgba(30,27,75,0.15) 0%, rgba(49,46,129,0.15) 100%);
+}
+/* ========== TEMA CLARO ========== */
+[data-theme="light"] {
+    --bg-primary: #f8f9fa;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --text-primary: #1a1f3a;
+    --text-secondary: rgba(26,31,58,0.7);
+    --accent-primary: #0066ff;
+    --accent-secondary: #00d4ff;
+    --border-color: rgba(26,31,58,0.1);
+    --gradient-1: linear-gradient(135deg, rgba(139,92,246,0.05) 0%, rgba(217,70,239,0.05) 100%);
+    --gradient-2: linear-gradient(135deg, rgba(30,27,75,0.05) 0%, rgba(49,46,129,0.05) 100%);
+}
+
+/* ========== CORRECCIONES FINALES ========== */
+/* Menú móvil siempre por encima de filtros sticky */
+.mobile-menu {
+  z-index: 60 !important;
+}
+
+/* Mejora de legibilidad en modo claro para textos específicos */
+[data-theme="light"] .text-secondary,
+[data-theme="light"] .pcard-rcount,
+[data-theme="light"] .review-card p,
+[data-theme="light"] .service-card p,
+[data-theme="light"] .footer-link,
+[data-theme="light"] .category-item p {
+  color: #2c3e66 !important;
+  opacity: 1 !important;
+}
+
+[data-theme="light"] .pcard-brand,
+[data-theme="light"] .pcard-subcat {
+  color: #1e3a8a !important;
+}
+
+[data-theme="light"] .hero-description,
+[data-theme="light"] .hero-subtitle {
+  text-shadow: none !important;
+}
+/* ========== RESET Y BASE ========== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Rajdhani', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+.orbitron { font-family: 'Orbitron', sans-serif; }
+.text-shadow { text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+/* ========== HEADER Y NAVEGACIÓN ========== */
+.nav-link {
+    position: relative;
+    transition: color 0.3s ease;
+    color: var(--text-secondary);
+}
+.nav-link:hover { color: var(--accent-primary); }
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent-primary);
+    transition: width 0.3s ease;
+}
+.nav-link:hover::after { width: 100%; }
+.icon-btn {
+    transition: all 0.3s ease;
+    color: var(--text-secondary);
+}
+.icon-btn:hover {
+    transform: scale(1.05);
+    color: var(--text-primary);
+}
+/* ========== BOTÓN SHOP (TECH) ========== */
+.btn-shop {
+    background: transparent;
+    border: 1px solid var(--accent-primary);
+    color: white;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    box-shadow: none;
+}
+.btn-shop::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,212,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+.btn-shop:hover::before { left: 100%; }
+.btn-shop:hover {
+    border-color: var(--accent-secondary);
+    background: rgba(0,212,255,0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px rgba(0,212,255,0.3);
+}
+/* ========== SLIDER / HERO ========== */
+.hero-slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+}
+.hero-slide.active { opacity: 1; }
+.hero-slide img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
+.dots-container .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.dots-container .dot.active {
+    background: var(--accent-primary);
+    width: 30px;
+    border-radius: 5px;
+}
+.clip-animate { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); }
+/* Reposicionamiento hero content */
+.hero-section .main-hero .hero-content {
+    justify-content: flex-end;
+    padding-bottom: 5rem;
+}
+@media (min-width: 768px) {
+    .hero-section .main-hero .hero-content { padding-bottom: 8rem; }
+}
+/* Overlay oscuro */
+.hero-section .main-hero .slider-container + .absolute {
+    background: linear-gradient(to top, rgba(0,0,0,0.5), rgba(0,0,0,0.2));
+}
+/* ========== TARJETAS LATERALES ========== */
+/* Images fill their containers perfectly */
+.card-1 img, .card-2-fixed img { object-fit: cover; }
+.card-2-fixed {
+    border: 1px solid rgba(255,255,255,0.1);
+}
+/* ========== HERO MÓVIL/TABLET FULL WIDTH ========== */
+@media (max-width: 1024px) {
+    .hero-section .h-full.w-full { padding-left: 0; padding-right: 0; }
+    .hero-section .main-hero { border-radius: 0; }
+    .hero-section .grid { gap: 0; }
+}
+/* ========== CATEGORÍAS ========== */
+.category-item {
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+    border-radius: 16px;
+}
+.category-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-primary);
+    box-shadow: 0 8px 24px rgba(0,212,255,0.2);
+}
+.categories-scroll {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 20px; /* para que el último se vea cortado */
+}
+@media (max-width: 767px) {
+    .categories-container { padding-right: 10px; }
+}
+@media (min-width: 768px) {
+    .categories-container { justify-content: center; }
+}
+.categories-scroll::-webkit-scrollbar {
+    height: 6px;
+}
+.categories-scroll::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 3px;
+}
+.categories-scroll::-webkit-scrollbar-thumb {
+    background: var(--accent-primary);
+    border-radius: 3px;
+}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+/* ========== TARJETAS DE SERVICIO ========== */
+.service-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+.service-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent-primary);
+}
+/* ========== TARJETAS DE PRODUCTO ========== */
+.product-card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+/* ========== MENÚ MÓVIL ========== */
+.mobile-menu {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+.mobile-menu.active { transform: translateX(0); }
+/* ========== SAFE SCROLL REVEAL ========== */
+.reveal-ready {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.reveal-ready.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ========== HIDE ALL SCROLLBARS ========== */
+.categories-scroll,
+.products-row {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.categories-scroll::-webkit-scrollbar,
+.products-row::-webkit-scrollbar {
+    display: none;
+}
+
+/* ========== TOGGLE DE TEMA ========== */
+.theme-toggle {
+    width: 50px; height: 26px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 13px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.theme-toggle-slider {
+    width: 20px; height: 20px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    position: absolute; top: 2px; left: 3px;
+    transition: transform 0.3s ease;
+}
+[data-theme="light"] .theme-toggle-slider { transform: translateX(24px); }
+
+/* Ocultar barra de scroll para Chrome, Safari y Opera */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Ocultar barra de scroll para IE, Edge y Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE y Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+
+/* ==================== BOTÓN 2: GLITCH EFFECT ==================== */
+        .btn-glitch {
+            position: relative;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: transparent;
+            border: 2px solid var(--accent-primary);
+            border-radius: 12px;
+            color: var(--accent-primary);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-glitch::before,
+        .btn-glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+        }
+
+        .btn-glitch::before {
+            animation: glitch-1 0.3s infinite;
+            color: #ff00de;
+            z-index: -1;
+        }
+
+        .btn-glitch::after {
+            animation: glitch-2 0.3s infinite;
+            color: #00fff7;
+            z-index: -2;
+        }
+
+        .btn-glitch:hover::before,
+        .btn-glitch:hover::after {
+            opacity: 0.8;
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { transform: translate(0); }
+            33% { transform: translate(-2px, 2px); }
+            66% { transform: translate(2px, -2px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { transform: translate(0); }
+            33% { transform: translate(2px, -2px); }
+            66% { transform: translate(-2px, 2px); }
+        }
+
+/* ========== FOOTER: FORZAR LEGIBILIDAD MODO CLARO ========== */
+[data-theme="light"] footer,
+[data-theme="light"] footer * {
+  color: #0f172a !important;
+  opacity: 1 !important;
+}
+
+[data-theme="light"] footer a {
+  color: #1e3a8a !important;
+}
+
+[data-theme="light"] footer a:hover {
+  color: var(--accent-primary) !important;
+}
+
+[data-theme="light"] footer .opacity-\[0\.4\],
+[data-theme="light"] footer .opacity-\[0\.5\],
+[data-theme="light"] footer .opacity-\[0\.6\] {
+  opacity: 1 !important;
+}

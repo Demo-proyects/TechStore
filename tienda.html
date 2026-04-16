@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechStore — Tienda</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* ──────────────────────────────────────────────
+       HERO / SLIDER
+    ────────────────────────────────────────────── */
+    .hero-slide{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity .8s ease-in-out}
+    .hero-slide.active{opacity:1}
+    .hero-slide img{width:100%;height:100%;object-fit:cover}
+    .dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;transition:all .3s}
+    .dot.active{background:var(--accent-primary);width:30px;border-radius:5px}
+    .clip-animate{clip-path:polygon(0 0,0 0,0 100%,0 100%);animation:clipReveal 1.1s cubic-bezier(.77,0,.175,1) forwards}
+    @keyframes clipReveal{to{clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}}
+    .nav-link{position:relative;transition:color .3s;color:var(--text-secondary)}
+    .nav-link:hover,.nav-link.active-nav{color:var(--accent-primary)}
+    .nav-link::after{content:'';position:absolute;bottom:-5px;left:0;width:0;height:2px;background:var(--accent-primary);transition:width .3s}
+    .nav-link:hover::after,.nav-link.active-nav::after{width:100%}
+    .mobile-menu{transform:translateX(-100%);transition:transform .3s ease}
+    .mobile-menu.active{transform:translateX(0)}
+    .icon-btn{transition:all .3s;color:var(--text-secondary)}
+    .icon-btn:hover{transform:scale(1.05);color:var(--text-primary)}
+    .theme-toggle{width:50px;height:26px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:13px;position:relative;cursor:pointer;transition:all .3s}
+    .theme-toggle-slider{width:20px;height:20px;background:var(--accent-primary);border-radius:50%;position:absolute;top:2px;left:3px;transition:transform .3s}
+    [data-theme="light"] .theme-toggle-slider{transform:translateX(24px)}
+
+    /* ──────────────────────────────────────────────
+       PRODUCT CARD — premium redesign
+    ────────────────────────────────────────────── */
+    .pcard{background:var(--bg-card);border:1px solid var(--border-color);display:flex;flex-direction:column;cursor:pointer;position:relative;overflow:hidden;transition:border-color .25s,transform .25s,box-shadow .25s}
+.pcard:hover{border-color:var(--accent-primary);transform:translateY(-5px);box-shadow:0 16px 48px rgba(0,0,0,.5)}
+.pcard-img{width:100%;aspect-ratio:1/1;overflow:hidden;background:var(--bg-secondary);position:relative}
+.pcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .55s ease}
+.pcard:hover .pcard-img img{transform:scale(1.08)}
+.pcard-img::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,212,255,.03) 3px,rgba(0,212,255,.03) 4px);opacity:0;transition:opacity .3s;pointer-events:none}
+.pcard:hover .pcard-img::after{opacity:1}
+.pcard-badge{position:absolute;top:0;left:0;padding:4px 10px;background:var(--accent-primary);color:#000;font-family:'Orbitron',sans-serif;font-size:.48rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;z-index:1}
+.pcard-num{position:absolute;bottom:6px;left:8px;font-family:'Orbitron',sans-serif;font-size:2rem;font-weight:900;color:rgba(255,255,255,.05);line-height:1;user-select:none;pointer-events:none}
+.pcard-wish{position:absolute;top:8px;right:8px;z-index:1;width:28px;height:28px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.5);backdrop-filter:blur(4px);opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s,border-color .2s}
+.pcard:hover .pcard-wish{opacity:1;transform:translateY(0)}
+.pcard-wish:hover{border-color:var(--accent-primary);color:var(--accent-primary)}
+.pcard-sep{height:1px;background:linear-gradient(90deg,var(--accent-primary),transparent);opacity:.35;flex-shrink:0}
+.pcard-body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:5px;flex:1}
+.pcard-meta{display:flex;align-items:center;justify-content:space-between}
+.pcard-brand{font-size:.52rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-primary)}
+.pcard-subcat{font-size:.5rem;color:var(--text-secondary);border:1px solid var(--border-color);padding:1px 5px;letter-spacing:.05em}
+.pcard-name{font-size:.73rem;font-weight:600;color:var(--text-primary);line-height:1.38;flex:1}
+.pcard-footer{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;margin-top:auto;padding-top:8px;border-top:1px solid var(--border-color)}
+.pcard-price{font-family:'Orbitron',sans-serif;font-size:.88rem;font-weight:800;color:var(--accent-primary);display:block;line-height:1}
+.pcard-stars{color:#f59e0b;font-size:.56rem;letter-spacing:.3px;display:block;margin-top:2px}
+.pcard-rcount{font-size:.54rem;color:var(--text-secondary)}
+.pcard-add{padding:7px 11px;background:var(--accent-primary);color:#000;border:none;font-size:.56rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:opacity .18s,transform .15s;font-family:'Orbitron',sans-serif;flex-shrink:0;align-self:flex-end;white-space:nowrap}
+.pcard-add:hover{opacity:.82;transform:translateY(-1px)}
+.pcard-add.in-cart{background:rgba(0,212,255,.1);border:1px solid var(--accent-primary);color:var(--accent-primary)}
+
+/* mobile: 2 col, padding mínimo */
+@media(max-width:640px){
+  .pcard-name{font-size:.68rem}
+  .pcard-price{font-size:.78rem}
+  .pcard-add{padding:6px 8px;font-size:.52rem}
+  .pcard-body{padding:8px 10px 10px}
+}
+
+    /* ──────────────────────────────────────────────
+       FILTER PILLS
+    ────────────────────────────────────────────── */
+    .filter-pill{
+      padding:6px 15px;
+      border:1px solid var(--border-color);
+      font-size:.62rem;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;
+      cursor:pointer;color:var(--text-secondary);
+      background:transparent;
+      transition:all .2s;white-space:nowrap;
+      font-family:'Rajdhani',sans-serif;
+    }
+    .filter-pill:hover{border-color:var(--accent-primary);color:var(--accent-primary)}
+    .filter-pill.active{
+      background:rgba(0,212,255,.08);
+      border-color:var(--accent-primary);
+      color:var(--accent-primary);
+      box-shadow:0 0 14px rgba(0,212,255,.12);
+    }
+
+    /* ──────────────────────────────────────────────
+       SEARCH + SORT BAR
+    ────────────────────────────────────────────── */
+    #search-input{
+      background:var(--bg-card);border:1px solid var(--border-color);
+      color:var(--text-primary);font-family:'Rajdhani',sans-serif;
+      font-size:.82rem;padding:9px 36px 9px 14px;
+      outline:none;width:100%;transition:border-color .2s;
+    }
+    #search-input:focus{border-color:var(--accent-primary)}
+    #search-input::placeholder{color:var(--text-secondary);opacity:.4}
+
+    #sort-select{
+      background:var(--bg-card);border:1px solid var(--border-color);
+      color:var(--text-secondary);font-family:'Rajdhani',sans-serif;
+      font-size:.75rem;padding:9px 12px;cursor:pointer;outline:none;
+      transition:border-color .2s;
+    }
+    #sort-select:focus{border-color:var(--accent-primary)}
+
+    /* ── MOBILE SORT ── */
+    .mobile-sort-btn{
+      display:flex;align-items:center;gap:6px;flex-shrink:0;
+      padding:9px 13px;
+      background:var(--bg-card);border:1px solid var(--border-color);
+      color:var(--text-secondary);font-size:.68rem;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+      font-family:'Rajdhani',sans-serif;transition:border-color .2s,color .2s;
+    }
+    .mobile-sort-btn:hover,.mobile-sort-btn.active{border-color:var(--accent-primary);color:var(--accent-primary)}
+    .mobile-sort-panel{
+      display:none;position:absolute;top:100%;left:0;right:0;z-index:50;
+      background:var(--bg-card);border:1px solid var(--border-color);
+      border-top:none;
+      box-shadow:0 12px 32px rgba(0,0,0,.5);overflow:hidden;
+    }
+    .mobile-sort-panel.open{display:block}
+    .sort-opt{
+      padding:11px 16px;font-size:.75rem;font-family:'Rajdhani',sans-serif;
+      letter-spacing:.08em;color:var(--text-secondary);cursor:pointer;
+      transition:background .15s,color .15s;
+      display:flex;align-items:center;justify-content:space-between;
+      border-bottom:1px solid var(--border-color);
+    }
+    .sort-opt:last-child{border-bottom:none}
+    .sort-opt:hover{background:rgba(0,212,255,.06);color:var(--accent-primary)}
+    .sort-opt.selected{color:var(--accent-primary);background:rgba(0,212,255,.04)}
+    .sort-opt.selected::after{content:'✓';font-size:.65rem}
+
+    /* ──────────────────────────────────────────────
+       PRICE RANGE
+    ────────────────────────────────────────────── */
+    .price-range{accent-color:var(--accent-primary);width:100%;cursor:pointer}
+
+    /* ──────────────────────────────────────────────
+       FILTER BAR SCROLL
+    ────────────────────────────────────────────── */
+    #filter-bar{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    #filter-bar::-webkit-scrollbar{display:none}
+
+    /* ──────────────────────────────────────────────
+       CART FAB
+    ────────────────────────────────────────────── */
+    #cart-fab{
+      position:fixed;bottom:28px;right:28px;z-index:500;
+      width:56px;height:56px;
+      background:var(--bg-card);
+      border:1px solid rgba(0,212,255,.3);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      box-shadow:0 4px 24px rgba(0,0,0,.55),0 0 0 1px rgba(0,212,255,.06);
+      transition:border-color .2s,box-shadow .2s,transform .2s;
+    }
+    #cart-fab:hover{border-color:var(--accent-primary);box-shadow:0 6px 32px rgba(0,212,255,.2);transform:scale(1.06)}
+    #cart-count{
+      position:absolute;top:-6px;right:-6px;
+      min-width:20px;height:20px;padding:0 4px;
+      background:var(--accent-primary);color:#000;font-weight:800;font-size:.62rem;
+      display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;
+    }
+
+    /* ──────────────────────────────────────────────
+       CART DRAWER
+    ────────────────────────────────────────────── */
+    #cart-drawer{
+      position:fixed;top:0;right:0;bottom:0;
+      width:min(420px,100vw);z-index:600;
+      background:var(--bg-primary);
+      border-left:1px solid var(--border-color);
+      transform:translateX(100%);
+      transition:transform .35s cubic-bezier(.4,0,.2,1);
+      display:flex;flex-direction:column;
+      box-shadow:-8px 0 40px rgba(0,0,0,.6);
+    }
+    #cart-drawer.open{transform:translateX(0)}
+    #cart-overlay{
+      position:fixed;inset:0;z-index:599;
+      background:rgba(0,0,0,.6);backdrop-filter:blur(3px);
+      opacity:0;pointer-events:none;transition:opacity .3s;
+    }
+    #cart-overlay.open{opacity:1;pointer-events:all}
+    .cart-item{border-bottom:1px solid var(--border-color)}
+    .cart-item:last-child{border-bottom:none}
+
+    /* ──────────────────────────────────────────────
+       TOAST
+    ────────────────────────────────────────────── */
+    #ts-toast{
+      position:fixed;bottom:100px;right:28px;z-index:700;
+      background:var(--bg-card);border:1px solid rgba(0,212,255,.3);
+      color:var(--text-primary);font-size:.73rem;letter-spacing:.06em;
+      padding:10px 18px;
+      transform:translateY(20px);opacity:0;transition:all .28s;pointer-events:none;
+    }
+    #ts-toast.show{transform:translateY(0);opacity:1}
+
+    /* ──────────────────────────────────────────────
+       PRODUCT MODAL — Premium full-screen panel (adaptado a tema)
+    ────────────────────────────────────────────── */
+    #pm-overlay {
+      position: fixed; inset: 0; z-index: 800;
+      background: rgba(0,0,0,.88);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      display: none; align-items: center; justify-content: center;
+      padding: 16px;
+    }
+    #pm-overlay.open { display: flex; }
+
+    #pm-box {
+      background: var(--bg-card);  /* antes #080c1e */
+      border: 1px solid var(--border-color);
+      width: 100%; max-width: 900px;
+      max-height: 94vh; overflow: hidden;
+      display: flex; flex-direction: column;
+      box-shadow: 0 40px 100px rgba(0,0,0,.85), 0 0 0 1px rgba(0,212,255,.05);
+      position: relative;
+      animation: pm-in .22s ease;
+    }
+    @keyframes pm-in {
+      from { opacity:0; transform: translateY(12px) scale(.99); }
+      to   { opacity:1; transform: translateY(0)   scale(1);   }
+    }
+
+    #pm-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 22px; height: 46px;
+      border-bottom: 1px solid var(--border-color);
+      flex-shrink: 0;
+      background: rgba(0,212,255,.025);
+    }
+    #pm-topbar-left { display: flex; align-items: center; gap: 10px; }
+    #pm-brand-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: .6rem; font-weight: 900;
+      letter-spacing: .22em; text-transform: uppercase;
+      color: var(--accent-primary);
+    }
+    #pm-subcat-tag {
+      font-size: .56rem; color: var(--text-secondary);
+      letter-spacing: .08em; padding: 2px 8px;
+      border: 1px solid var(--border-color);
+      text-transform: uppercase;
+    }
+    #pm-close {
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      background: none; border: 1px solid var(--border-color);
+      color: var(--text-secondary); cursor: pointer;
+      transition: border-color .18s, color .18s, background .18s;
+    }
+    #pm-close:hover { border-color: var(--accent-primary); color: var(--accent-primary); background: rgba(0,212,255,.05); }
+
+    #pm-body { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+
+    #pm-img-panel {
+      width: 45%; flex-shrink: 0;
+      background: var(--bg-secondary);
+      position: relative; overflow: hidden;
+    }
+    #pm-main-img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      filter: brightness(.92);
+      transition: transform .5s ease;
+    }
+    #pm-img-panel:hover #pm-main-img { transform: scale(1.03); }
+
+    #pm-img-badge {
+      position: absolute; top: 0; right: 0;
+      font-family: 'Orbitron', sans-serif;
+      font-size: .5rem; font-weight: 800;
+      letter-spacing: .16em;
+      color: #000; background: var(--accent-primary);
+      padding: 5px 13px;
+    }
+
+    #pm-img-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 28px 18px 16px;
+      background: linear-gradient(to top, rgba(0,0,0,.82), transparent);
+      display: flex; align-items: flex-end; justify-content: space-between;
+    }
+    #pm-img-overlay-right {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+    }
+    .pm-rating-chip {
+      font-family: 'Orbitron', sans-serif;
+      font-size: .65rem; font-weight: 700;
+      color: var(--text-primary);
+      background: rgba(0,0,0,.58);
+      padding: 4px 9px;
+      border: 1px solid rgba(255,255,255,.13);
+      backdrop-filter: blur(4px);
+    }
+    .pm-stock-dot  {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #22c55e; flex-shrink: 0;
+      box-shadow: 0 0 7px rgba(34,197,94,.65);
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { box-shadow: 0 0 6px rgba(34,197,94,.65); }
+      50%     { box-shadow: 0 0 13px rgba(34,197,94,.9);  }
+    }
+    .pm-stock-txt {
+      font-size: .58rem; font-weight: 700;
+      color: #86efac; letter-spacing: .08em; text-transform: uppercase;
+    }
+
+    #pm-details {
+      flex: 1; overflow-y: auto;
+      display: flex; flex-direction: column;
+      border-left: 1px solid var(--border-color);
+      scrollbar-width: thin; scrollbar-color: var(--border-color) transparent;
+    }
+    #pm-details::-webkit-scrollbar { width: 3px; }
+    #pm-details::-webkit-scrollbar-thumb { background: var(--border-color); }
+
+    #pm-details-content {
+      padding: 20px 22px;
+      display: flex; flex-direction: column;
+      gap: 14px; flex: 1;
+      position: relative;
+    }
+    #pm-deco {
+      position: absolute; top: 8px; right: 14px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 4.5rem; font-weight: 900;
+      color: rgba(0,212,255,.08);  /* más visible pero sutil */
+      line-height: 1; user-select: none; pointer-events: none;
+    }
+
+    #pm-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: .96rem; font-weight: 800;
+      color: var(--text-primary); line-height: 1.32;
+    }
+    .pm-div { height: 1px; background: var(--border-color); }
+
+    #pm-price-row { display: flex; align-items: baseline; gap: 10px; }
+    #pm-price {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem; font-weight: 800;
+      color: var(--accent-primary);
+    }
+    #pm-old-price { font-size: .82rem; color: var(--text-secondary); text-decoration: line-through; }
+
+    .pm-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .pm-spec {
+      display: flex; flex-direction: column; gap: 2px;
+      padding: 8px 10px;
+      background: var(--bg-card);  /* antes rgba(255,255,255,.025) */
+      border: 1px solid var(--border-color);
+    }
+    .pm-spec-label { font-size: .54rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--text-secondary); }
+    .pm-spec-val   { font-size: .76rem; font-weight: 600; color: var(--text-primary); }
+
+    .pm-section-label {
+      font-size: .58rem; font-weight: 800;
+      letter-spacing: .16em; text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .pm-colors { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+    .pm-color-opt {
+      padding: 5px 14px;
+      border: 1px solid var(--border-color);
+      font-size: .65rem; font-weight: 600; letter-spacing: .06em;
+      color: var(--text-secondary); background: transparent;
+      cursor: pointer; transition: all .18s;
+      font-family: 'Rajdhani', sans-serif;
+      position: relative; overflow: hidden;
+    }
+    .pm-color-opt:hover { border-color: var(--accent-primary); color: var(--accent-primary); background: rgba(0,212,255,.05); }
+    .pm-color-opt.sel   { border-color: var(--accent-primary); color: var(--accent-primary); background: rgba(0,212,255,.05); }
+    .pm-color-opt.sel::after {
+      content: '✓'; position: absolute; top: 2px; right: 4px;
+      font-size: .48rem; color: var(--accent-primary);
+    }
+
+    .pm-qty-wrap { display: flex; align-items: center; gap: 0; margin-top: 8px; }
+    .pm-qty-btn {
+      width: 38px; height: 38px;
+      background: var(--bg-card);  /* antes rgba(255,255,255,.03) */
+      border: 1px solid var(--border-color);
+      color: var(--text-primary); font-size: 1.1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color .18s, color .18s;
+    }
+    .pm-qty-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+    #pm-qty-val {
+      width: 52px; height: 38px;
+      background: var(--bg-card);  /* antes rgba(255,255,255,.03) */
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      border-left: none; border-right: none;
+      text-align: center; color: var(--text-primary);
+      font-size: .88rem; font-weight: 700;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    #pm-shipping {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      padding: 10px 13px;
+      background: transparent !important;
+      border: none !important;
+    }
+
+    .pm-ship-items { 
+      display: contents; 
+    }
+
+    .pm-ship-item {
+      display: flex; 
+      align-items: center; 
+      gap: 7px;
+      font-size: 0.62rem; 
+      color: var(--text-secondary);
+    }
+
+    .pm-ship-item::before {
+      content: '';
+      width: 5px; 
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      flex-shrink: 0;
+    }
+
+    #pm-shipping > svg:first-child { 
+      display: none; 
+    }
+
+    #pm-cta {
+      display: flex; gap: 8px;
+      padding: 0 22px 18px;
+      flex-shrink: 0;
+    }
+    #pm-add-btn {
+      flex: 1; padding: 14px;
+      background: var(--accent-primary); color: #000;
+      font-weight: 900; font-size: .72rem;
+      letter-spacing: .2em; text-transform: uppercase;
+      cursor: pointer; border: none;
+      font-family: 'Orbitron', sans-serif;
+      transition: opacity .2s, transform .15s;
+    }
+    #pm-add-btn:hover  { opacity: .88; transform: translateY(-1px); }
+    #pm-add-btn:active { transform: translateY(0); }
+    #pm-wish-btn {
+      width: 50px; flex-shrink: 0;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color .18s, color .18s, background .18s;
+    }
+    #pm-wish-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); background: rgba(0,212,255,.05); }
+
+    @media (max-width: 640px) {
+      #pm-overlay { padding: 0; align-items: flex-end; }
+      #pm-box {
+        max-height: 96vh; max-width: 100%;
+        border-left: none; border-right: none; border-bottom: none;
+        animation: pm-up .25s ease;
+      }
+      @keyframes pm-up {
+        from { opacity:0; transform: translateY(30px); }
+        to   { opacity:1; transform: translateY(0); }
+      }
+      #pm-body { flex-direction: column; overflow-y: auto; }
+      #pm-img-panel {
+        width: 100%;
+        height: 240px;
+        flex-shrink: 0;
+      }
+      #pm-details {
+        overflow-y: visible;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+      }
+      #pm-details-content { padding: 16px 16px 12px; gap: 12px; }
+      #pm-name  { font-size: .86rem; }
+      #pm-price { font-size: 1.3rem; }
+      #pm-deco  { display: none; }
+      #pm-cta   { padding: 0 16px 16px; }
+      .pm-specs { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ──────────────────────────────────────────────
+       EMPTY STATE
+    ────────────────────────────────────────────── */
+    .empty-grid{grid-column:1/-1;text-align:center;padding:80px 20px}
+
+    /* ──────────────────────────────────────────────
+       RESULTS + ACTIVE FILTER CHIP
+    ────────────────────────────────────────────── */
+    .active-filter-chip{
+      display:inline-flex;align-items:center;gap:5px;
+      padding:3px 10px;
+      background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.3);
+      font-size:.6rem;font-weight:700;letter-spacing:.1em;
+      color:var(--accent-primary);text-transform:uppercase;
+      font-family:'Rajdhani',sans-serif;
+    }
+
+    /* === NUEVOS ESTILOS PARA EL HEADER OCULTABLE === */
+    header {
+      transition: transform 0.3s ease;
+    }
+    header.header-hidden {
+      transform: translateY(-100%);
+    }
+
+    /* === VARIABLES RGB PARA EL FONDO DEL HEADER === */
+    :root {
+      --bg-primary-rgb: 10, 14, 39;   /* dark mode */
+    }
+    [data-theme="light"] {
+      --bg-primary-rgb: 248, 249, 250; /* light mode */
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════ HEADER ══ -->
+<header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-[var(--border-color)]" style="background:rgba(var(--bg-primary-rgb), 0.96)">
+  <div class="container mx-auto px-4 md:px-6 py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <div class="orbitron text-2xl font-bold" style="color:var(--accent-primary)">TECH</div>
+        <div class="orbitron text-2xl font-bold" style="color:var(--text-primary)">STORE</div>
+      </div>
+      <nav class="hidden md:flex items-center space-x-8">
+        <a href="index.html" class="nav-link font-medium text-sm tracking-wide">INICIO</a>
+        <a href="#" class="nav-link font-medium text-sm tracking-wide">COLECCIONES</a>
+        <a href="tienda.html" class="nav-link active-nav font-medium text-sm tracking-wide">PRODUCTOS</a>
+        <a href="#" class="nav-link font-medium text-sm tracking-wide">OFERTAS</a>
+        <a href="#" class="nav-link font-medium text-sm tracking-wide">CONTACTO</a>
+      </nav>
+      <div class="flex items-center space-x-4">
+        <div class="theme-toggle" onclick="toggleTheme()"><div class="theme-toggle-slider"></div></div>
+        <button class="icon-btn hidden md:flex items-center">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        </button>
+        <button class="icon-btn hidden md:flex items-center relative" onclick="openCart()">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span id="header-cart-count" class="absolute -top-2 -right-2 min-w-[16px] h-4 px-1 orbitron text-[9px] font-black flex items-center justify-center hidden" style="background:var(--accent-primary);color:#000">0</span>
+        </button>
+        <button class="md:hidden icon-btn" onclick="toggleMobileMenu()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════ MENÚ MÓVIL ══ -->
+<div class="mobile-menu fixed top-0 left-0 w-64 h-full z-40 shadow-2xl md:hidden" id="mobileMenu" style="background:var(--bg-secondary)">
+  <div class="p-6">
+    <button class="mb-8" onclick="toggleMobileMenu()">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+    <nav class="flex flex-col space-y-4">
+      <a href="index.html" class="nav-link font-medium text-base">INICIO</a>
+      <a href="#" class="nav-link font-medium text-base">COLECCIONES</a>
+      <a href="tienda.html" class="nav-link active-nav font-medium text-base">PRODUCTOS</a>
+      <a href="#" class="nav-link font-medium text-base">OFERTAS</a>
+      <a href="#" class="nav-link font-medium text-base">CONTACTO</a>
+    </nav>
+    <a href="https://wa.me/18098786115" target="_blank" class="mt-8 flex items-center space-x-2 px-4 py-2 rounded-lg bg-green-600 text-white">
+      <i class="fab fa-whatsapp text-base"></i><span>+1 809-878-6115</span>
+    </a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ HERO ══ -->
+<section class="hero-section relative" style="height:100svh;min-height:600px;padding-top:65px">
+  <div class="h-full w-full px-0 md:px-4 lg:px-6">
+    <div class="grid grid-cols-12 gap-0 md:gap-4 h-full">
+      <div class="main-hero col-span-12 md:col-span-7 relative overflow-hidden md:rounded-r-none lg:rounded-r-2xl clip-animate h-full">
+        <div class="slider-container absolute inset-0">
+          <div class="hero-slide active"><img src="img/fondo-1.png" alt="Gaming" class="w-full h-full object-cover"></div>
+          <div class="hero-slide"><img src="img/fondo-2.png" alt="Tech" class="w-full h-full object-cover"></div>
+          <div class="hero-slide"><img src="img/fondo-3.png" alt="Electronics" class="w-full h-full object-cover"></div>
+          <div class="hero-slide"><img src="img/fondo-4.png" alt="New" class="w-full h-full object-cover"></div>
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+        <div class="absolute inset-0 flex flex-col justify-end pb-16 md:pb-24 px-8 md:px-12">
+          <p style="color:var(--accent-primary)" class="text-xs tracking-[.3em] font-medium mb-3 uppercase">Catálogo Completo</p>
+          <h1 class="orbitron text-white text-2xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight" style="text-shadow:0 2px 10px rgba(0,0,0,.5)">TODA LA<br>TECNOLOGÍA</h1>
+          <p class="text-white/90 text-sm md:text-base mb-8 max-w-md leading-relaxed">Explora nuestra colección completa. Filtra por categoría y encuentra exactamente lo que buscas.</p>
+          <button onclick="document.getElementById('store-body').scrollIntoView({behavior:'smooth'})" class="btn-shop self-start px-6 py-2 text-white font-semibold text-xs uppercase" style="border:1px solid var(--accent-primary);border-radius:8px">VER CATÁLOGO ↓</button>
+          <div class="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 flex space-x-3">
+            <div class="dot active" data-slide="0"></div><div class="dot" data-slide="1"></div><div class="dot" data-slide="2"></div><div class="dot" data-slide="3"></div>
+          </div>
+        </div>
+      </div>
+      <div class="side-cards hidden md:flex col-span-5 flex-col gap-4 pr-0">
+        <div class="card-1 relative overflow-hidden rounded-l-2xl rounded-r-none flex-1 group cursor-pointer clip-animate">
+          <img src="img/fondo-6.png" alt="Audio" class="absolute inset-0 w-full h-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+          <div class="relative h-full flex flex-col justify-end p-8 text-white">
+            <p class="text-xs tracking-[.2em] font-medium mb-2 uppercase" style="color:var(--accent-primary)">Asistentes Voz</p>
+            <h3 class="orbitron text-2xl font-bold" style="text-shadow:0 2px 10px rgba(0,0,0,.5)">ALTA VOZ <br>INTELIGENTE</h3>
+            <div class="mt-4 flex items-center space-x-2">
+              <a href="tienda.html?filter=audio" class="text-sm opacity-90">Ver más</a>
+              <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="card-2-fixed relative overflow-hidden rounded-l-2xl rounded-r-none flex-1 group cursor-pointer clip-animate" style="border:1px solid var(--border-color)">
+          <img src="img/fondo-5.png" alt="Speaker" class="absolute inset-0 w-full h-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent"></div>
+          <div class="relative h-full flex flex-col justify-end p-8 text-white">
+            <p class="text-xs tracking-[.2em] font-medium mb-2 uppercase" style="color:var(--accent-primary)">Smart Home</p>
+            <h3 class="orbitron text-2xl font-bold" style="text-shadow:0 2px 10px rgba(0,0,0,.5)">Laptop HP<br>Intel Core i7</h3>
+            <div class="mt-4 flex items-center space-x-2">
+              <a href="tienda.html?filter=audio" class="text-sm opacity-90">Ver más</a>
+              <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ STORE BODY ══ -->
+<div id="store-body" style="background:var(--bg-primary);min-height:100vh">
+
+  <!-- Store header bar -->
+  <div style="background:var(--bg-secondary);border-bottom:1px solid var(--border-color)">
+    <div class="container mx-auto px-3 md:px-6 py-5">
+      <div class="flex flex-col gap-3">
+        <!-- Row 1: title + desktop controls -->
+        <div class="flex items-start md:items-center justify-between gap-4">
+          <div>
+            <p class="text-xs tracking-[.25em] uppercase font-bold mb-0.5" style="color:var(--accent-primary)">Catálogo</p>
+            <h2 class="orbitron text-lg md:text-2xl font-black" style="color:var(--text-primary)" id="store-title">TODOS LOS PRODUCTOS</h2>
+          </div>
+          <!-- desktop: search + sort -->
+          <div class="hidden md:flex items-center gap-3 flex-shrink-0">
+            <div class="relative w-56">
+              <input type="text" id="search-input" placeholder="Buscar producto…" oninput="applyFilters()">
+              <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none" style="color:var(--text-secondary);opacity:.4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <select id="sort-select" onchange="applyFilters()">
+              <option value="default">↕ Relevancia</option>
+              <option value="price-asc">↑ Precio: Menor</option>
+              <option value="price-desc">↓ Precio: Mayor</option>
+              <option value="rating">★ Mejor valorados</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: mobile — search + sort -->
+        <div class="md:hidden relative">
+          <div class="flex gap-2">
+            <div class="relative flex-1">
+              <input type="text" id="search-input-m"
+                style="width:100%;background:var(--bg-card);border:1px solid var(--border-color);color:var(--text-primary);font-family:'Rajdhani',sans-serif;font-size:.82rem;padding:9px 36px 9px 12px;outline:none;"
+                placeholder="Buscar…" oninput="syncSearch(this.value)">
+              <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none" style="color:var(--text-secondary);opacity:.4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <button class="mobile-sort-btn" id="mobile-sort-btn" onclick="toggleSortPanel()">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M7 12h10m-6 6h2"/></svg>
+              <span id="mobile-sort-label">Orden</span>
+            </button>
+          </div>
+          <!-- Sort dropdown -->
+          <div class="mobile-sort-panel" id="mobile-sort-panel">
+            <div class="sort-opt selected" data-val="default"    onclick="setSort('default','↕ Relevancia')">↕ Relevancia</div>
+            <div class="sort-opt"          data-val="price-asc"  onclick="setSort('price-asc','↑ Precio: Menor')">↑ Precio: Menor</div>
+            <div class="sort-opt"          data-val="price-desc" onclick="setSort('price-desc','↓ Precio: Mayor')">↓ Precio: Mayor</div>
+            <div class="sort-opt"          data-val="rating"     onclick="setSort('rating','★ Valorados')">★ Mejor valorados</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter bar — sticky (con id para manipular) -->
+  <div id="filter-bar-container" style="background:var(--bg-primary);border-bottom:1px solid var(--border-color);position:sticky;top:65px;z-index:40">
+    <div class="container mx-auto px-3 md:px-6">
+      <div id="filter-bar" class="flex items-center gap-2 py-3"></div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="container mx-auto px-2 md:px-6 py-6 md:py-10">
+
+    <!-- Results row -->
+    <div class="flex items-center justify-between mb-4 md:mb-6 px-1 md:px-0">
+      <div class="flex items-center gap-3 flex-wrap">
+        <p class="text-xs tracking-wide" style="color:var(--text-secondary)">
+          <span id="results-count" class="font-bold orbitron text-sm" style="color:var(--text-primary)">0</span>
+          <span class="ml-1 hidden sm:inline">productos</span>
+        </p>
+        <span id="active-filter-chip" class="active-filter-chip" style="display:none"></span>
+      </div>
+      <!-- Price range desktop -->
+      <div class="hidden md:flex items-center gap-3">
+        <span class="text-xs tracking-wide" style="color:var(--text-secondary)">Precio máx:</span>
+        <input type="range" id="price-range" min="500" max="200000" value="200000" step="500" class="price-range w-28" oninput="updatePriceLabel();applyFilters()">
+        <span id="price-label" class="orbitron text-xs font-bold" style="color:var(--accent-primary);min-width:78px">Sin límite</span>
+      </div>
+    </div>
+
+    <!-- Product grid -->
+    <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-5"></div>
+
+    <!-- Load more -->
+    <div class="text-center mt-10 md:mt-14" id="load-more-wrap" style="display:none">
+      <button onclick="loadMore()" class="px-10 py-3 text-xs font-bold tracking-[.18em] uppercase transition-all duration-200 hover:border-[var(--accent-primary)] hover:text-[var(--accent-primary)]" style="border:1px solid var(--border-color);color:var(--text-secondary);background:transparent;cursor:pointer;font-family:'Rajdhani',sans-serif">CARGAR MÁS</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ FOOTER ══ -->
+<footer style="background:var(--bg-secondary);border-top:1px solid var(--border-color)">
+  <div class="container mx-auto px-4 md:px-6 py-14">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
+      <div class="col-span-2 md:col-span-1">
+        <div class="flex items-center space-x-2 mb-4">
+          <div class="orbitron text-xl font-bold" style="color:var(--accent-primary)">TECH</div>
+          <div class="orbitron text-xl font-bold text-white">STORE</div>
+        </div>
+        <p class="text-xs leading-relaxed mb-4" style="color:var(--text-secondary);opacity:.5">Tu destino tecnológico de confianza. Calidad garantizada en cada producto.</p>
+        <div class="flex gap-3">
+          <a href="https://wa.me/18098786115" class="w-8 h-8 flex items-center justify-center" style="border:1px solid var(--border-color);color:var(--text-secondary);transition:all .2s"><i class="fab fa-whatsapp text-sm"></i></a>
+          <a href="#" class="w-8 h-8 flex items-center justify-center" style="border:1px solid var(--border-color);color:var(--text-secondary);transition:all .2s"><i class="fab fa-instagram text-sm"></i></a>
+          <a href="#" class="w-8 h-8 flex items-center justify-center" style="border:1px solid var(--border-color);color:var(--text-secondary);transition:all .2s"><i class="fab fa-facebook-f text-sm"></i></a>
+        </div>
+      </div>
+      <div>
+        <h5 class="orbitron text-xs font-bold text-white mb-4 tracking-widest">TIENDA</h5>
+        <ul class="space-y-2 text-xs" style="color:var(--text-secondary);opacity:.6">
+          <li><a href="tienda.html?filter=smartphones" style="transition:color .2s" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color=''">Smartphones</a></li>
+          <li><a href="tienda.html?filter=laptops" style="transition:color .2s" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color=''">Laptops</a></li>
+          <li><a href="tienda.html?filter=macbooks" style="transition:color .2s" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color=''">Tablets</a></li>
+          <li><a href="tienda.html?filter=audio" style="transition:color .2s" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color=''">Audio</a></li>
+          <li><a href="tienda.html?filter=drones" style="transition:color .2s" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color=''">Drones</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5 class="orbitron text-xs font-bold text-white mb-4 tracking-widest">AYUDA</h5>
+        <ul class="space-y-2 text-xs" style="color:var(--text-secondary);opacity:.6">
+          <li><a href="#">Mi Cuenta</a></li><li><a href="#">Mis Pedidos</a></li>
+          <li><a href="#">Devoluciones</a></li><li><a href="#">Soporte</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5 class="orbitron text-xs font-bold text-white mb-4 tracking-widest">EMPRESA</h5>
+        <ul class="space-y-2 text-xs" style="color:var(--text-secondary);opacity:.6">
+          <li><a href="#">Sobre Nosotros</a></li><li><a href="#">Blog</a></li>
+          <li><a href="#">Privacidad</a></li><li><a href="#">Términos</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5 class="orbitron text-xs font-bold text-white mb-4 tracking-widest">NEWSLETTER</h5>
+        <p class="text-xs mb-3" style="color:var(--text-secondary);opacity:.5">Recibe ofertas exclusivas.</p>
+        <input type="email" placeholder="tu@email.com" style="width:100%;padding:8px 12px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-color);font-size:.73rem;outline:none;margin-bottom:8px">
+        <button style="width:100%;padding:8px;background:var(--accent-primary);color:#000;font-weight:700;font-size:.7rem;letter-spacing:.1em;cursor:pointer;font-family:'Orbitron',sans-serif">SUSCRIBIR</button>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--border-color);padding-top:20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+      <p style="font-size:.72rem;color:var(--text-secondary);opacity:.4">© 2025 TechStore. Todos los derechos reservados.</p>
+      <div class="flex items-center gap-2">
+        <span style="font-size:.62rem;color:var(--text-secondary);opacity:.4;letter-spacing:.08em">PAGO SEGURO</span>
+        <div style="width:40px;height:26px;border-radius:4px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="0 0 48 32" width="40" height="26"><path d="M21.055 21.932h-2.653l1.66-10.264h2.652l-1.659 10.264zm-4.56-10.264l-2.54 7.013-.298-1.513-.895-4.568s-.11-.932-1.266-.932H7.193l-.044.156s1.21.25 2.625.975l2.183 8.133h2.764l4.233-10.264h-2.459zm23.1 10.264h2.406l-2.098-10.264h-2.098c-.947 0-1.178.73-1.178.73l-3.965 9.534h2.764l.55-1.513h3.366l.253 1.513zm-2.922-3.591l1.385-3.788.77 3.788h-2.155zm-6.72-4.486l.374-2.187s-1.155-.437-2.353-.437c-1.298 0-4.384.562-4.384 3.306 0 2.588 3.625 2.62 3.625 3.98 0 1.358-3.25 1.108-4.318.25l-.386 2.25s1.165.562 2.949.562c1.782 0 4.47-.906 4.47-3.43 0-2.619-3.658-2.807-3.658-3.98 0-1.171 2.728-.999 3.68-.313z" fill="#1434CB"/></svg>
+        </div>
+        <div style="width:40px;height:26px;border-radius:4px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="0 0 48 32" width="40" height="26"><circle cx="18" cy="16" r="8" fill="#EB001B"/><circle cx="30" cy="16" r="8" fill="#F79E1B"/><path d="M24 9.6a7.97 7.97 0 0 0-3 6.4c0 2.56 1.2 4.84 3 6.4a7.97 7.97 0 0 0 3-6.4c0-2.56-1.2-4.84-3-6.4z" fill="#FF5F00"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════ CART FAB ══ -->
+<button id="cart-fab" onclick="openCart()" title="Ver carrito">
+  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--accent-primary)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+  <span id="cart-count" style="display:none">0</span>
+</button>
+
+<!-- ════════════════════════════════════ CART DRAWER ══ -->
+<div id="cart-overlay" onclick="closeCart()"></div>
+<div id="cart-drawer">
+  <div style="padding:18px 22px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+    <h3 class="orbitron text-sm font-bold tracking-widest" style="color:var(--text-primary)">CARRITO</h3>
+    <button onclick="closeCart()" style="color:var(--text-secondary);cursor:pointer;transition:color .2s;background:none;border:none" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color='var(--text-secondary)'">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div id="cart-items" style="flex:1;overflow-y:auto;padding:14px 20px"></div>
+  <div id="cart-footer" style="padding:18px 22px;border-top:1px solid var(--border-color);flex-shrink:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <span class="text-xs tracking-[.12em] uppercase" style="color:var(--text-secondary)">Total</span>
+      <span id="cart-total" class="orbitron font-bold text-lg" style="color:var(--accent-primary)">$0</span>
+    </div>
+    <button onclick="checkout()" style="width:100%;padding:13px;background:var(--accent-primary);color:#000;font-weight:800;font-size:.73rem;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;border:none;font-family:'Orbitron',sans-serif;transition:opacity .2s">FINALIZAR COMPRA</button>
+    <button onclick="clearCart()" style="width:100%;padding:9px;margin-top:7px;background:transparent;border:1px solid var(--border-color);color:var(--text-secondary);font-size:.68rem;letter-spacing:.1em;cursor:pointer;transition:all .2s;font-family:'Rajdhani',sans-serif">VACIAR CARRITO</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ PRODUCT MODAL ══ -->
+<div id="pm-overlay" onclick="closeModal()">
+  <div id="pm-box" onclick="event.stopPropagation()">
+
+    <!-- top bar -->
+    <div id="pm-topbar">
+      <div id="pm-topbar-left">
+        <span id="pm-brand-tag"></span>
+        <span id="pm-subcat-tag"></span>
+      </div>
+      <button id="pm-close" onclick="closeModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- body: image + details -->
+    <div id="pm-body">
+
+      <!-- IMAGE PANEL -->
+      <div id="pm-img-panel">
+        <img id="pm-main-img" src="" alt="">
+
+        <!-- badge top-right -->
+        <div id="pm-img-badge">BESTSELLER</div>
+
+        <!-- bottom overlay -->
+        <div id="pm-img-overlay">
+          <div id="pm-img-price-over"><!-- poblado por JS si es necesario --></div>
+          <div class="flex items-center gap-1 ml-0 mr-auto">
+            <div class="pm-stock-dot"></div>
+            <span class="pm-stock-txt">En Stock</span>
+          </div>
+          <div id="pm-img-overlay-right">
+            <div class="pm-rating-chip" id="pm-rating-chip">★ —</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DETAILS PANEL -->
+      <div id="pm-details">
+        <div id="pm-details-content">
+
+          <!-- decorative number -->
+          <div id="pm-deco">01</div>
+
+          <!-- name -->
+          <h2 id="pm-name"></h2>
+
+          <!-- stars + reviews -->
+          <div style="display:flex;align-items:center;gap:8px">
+            <span id="pm-stars" style="color:#f59e0b;font-size:.82rem;letter-spacing:1px"></span>
+            <span id="pm-review-txt" style="font-size:.68rem;color:var(--text-secondary)"></span>
+          </div>
+
+          <div class="pm-div"></div>
+
+          <!-- price -->
+          <div id="pm-price-row">
+            <span id="pm-price"></span>
+            <span id="pm-old-price"></span>
+          </div>
+
+          <!-- specs grid -->
+          <div class="pm-specs" id="pm-specs"></div>
+
+          <div class="pm-div"></div>
+
+          <!-- colors / variants -->
+          <div id="pm-colors-wrap">
+            <span class="pm-section-label">Variantes disponibles</span>
+            <div class="pm-colors" id="pm-colors"></div>
+          </div>
+
+          <!-- qty -->
+          <div>
+            <span class="pm-section-label">Cantidad</span>
+            <div class="pm-qty-wrap">
+              <button class="pm-qty-btn" onclick="changeQty(-1)">−</button>
+              <input id="pm-qty-val" type="text" value="1" readonly>
+              <button class="pm-qty-btn" onclick="changeQty(1)">+</button>
+            </div>
+          </div>
+
+          <!-- shipping / perks -->
+          <div id="pm-shipping">
+            <div class="pm-ship-items">
+              <div class="pm-ship-item">Envío gratuito</div>
+              <div class="pm-ship-item">Garantía de 1 año</div>
+              <div class="pm-ship-item">Devolución en 30 días</div>
+            </div>
+          </div>
+
+        </div><!-- /pm-details-content -->
+
+        <!-- CTA pinned at the bottom -->
+        <div id="pm-cta">
+          <button id="pm-add-btn" onclick="modalAddToCart()">AÑADIR AL CARRITO</button>
+          <button id="pm-wish-btn" title="Guardar en favoritos" onclick="wishlist(event, 0)">
+            <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+          </button>
+        </div>
+
+      </div><!-- /pm-details -->
+    </div><!-- /pm-body -->
+  </div><!-- /pm-box -->
+</div><!-- /pm-overlay -->
+
+<!-- ══════════════════════════════════════════ TOAST ══ -->
+<div id="ts-toast"></div>
+
+<!-- ══════════════════════════════════════════ JS ══ -->
+<script src="tienda.js"></script>
+<script src="fixes.js"></script>
+
+<!-- Script para ocultar/mostrar el header con el scroll y ajustar la barra de filtros -->
+<script>
+  (function() {
+    const header = document.querySelector('header');
+    const filterBar = document.getElementById('filter-bar-container');
+    if (!header || !filterBar) return;
+
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    function updateHeaderAndFilter() {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scroll hacia abajo: ocultar header y subir la barra de filtros
+        header.classList.add('header-hidden');
+        filterBar.style.top = '0';
+      } else {
+        // Scroll hacia arriba: mostrar header y bajar la barra de filtros
+        header.classList.remove('header-hidden');
+        filterBar.style.top = '65px';
+      }
+      
+      lastScrollY = currentScrollY;
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateHeaderAndFilter);
+        ticking = true;
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>
