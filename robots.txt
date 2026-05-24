@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://techstore-lr.netlify.app/sitemap.xml
